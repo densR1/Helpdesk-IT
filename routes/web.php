@@ -73,7 +73,7 @@ Route::get('/stats/categories-monthly', function (\Illuminate\Http\Request $requ
 
         $labels = [];
         $data = [];
-        $colors = ['#4dc9f6','#f67019','#f53794','#537bc4','#acc236','#166a8f','#00a950','#58595b'];
+        $colors = ['#4dc9f6', '#f67019', '#f53794', '#537bc4', '#acc236', '#166a8f', '#00a950', '#58595b'];
         $bg = [];
         foreach ($topCategoryIds as $idx => $catId) {
             $cat = $categories->firstWhere('id', $catId);
@@ -103,7 +103,9 @@ Route::get('/stats/categories-monthly', function (\Illuminate\Http\Request $requ
         ->groupBy('id_kategori', 'month')
         ->get();
 
-    $labels = array_map(function ($m) { return date('M', mktime(0,0,0,$m,1)); }, range(1,12));
+    $labels = array_map(function ($m) {
+        return date('M', mktime(0, 0, 0, $m, 1));
+    }, range(1, 12));
 
     $totals = [];
     foreach ($rows as $r) {
@@ -117,7 +119,7 @@ Route::get('/stats/categories-monthly', function (\Illuminate\Http\Request $requ
     }
 
     $datasets = [];
-    $colors = ['#4dc9f6','#f67019','#f53794','#537bc4','#acc236','#166a8f','#00a950','#58595b'];
+    $colors = ['#4dc9f6', '#f67019', '#f53794', '#537bc4', '#acc236', '#166a8f', '#00a950', '#58595b'];
 
     foreach ($topCategoryIds as $idx => $catId) {
         $cat = $categories->firstWhere('id', $catId);
@@ -210,7 +212,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('/tickets/{ticket}/comment', [TicketController::class, 'addComment'])
-    ->name('tickets.addComment');
+        ->name('tickets.addComment');
 
 
 
@@ -243,18 +245,21 @@ Route::middleware('auth')->group(function () {
 //FAQ/faqs route
 
 
-Route::resource('faq', FaqController::class);
-
-// ADMIN
+// ADMIN FAQ
 Route::middleware(['auth'])->group(function () {
-    Route::resource('admin/faq', FaqController::class);
-});
+    Route::resource('admin/faq', FaqController::class)->names([
+        'index'   => 'admin.faq.index',
+        'create'  => 'admin.faq.create',
+        'store'   => 'admin.faq.store',
+        'show'    => 'admin.faq.show',
+        'edit'    => 'admin.faq.edit',
+        'update'  => 'admin.faq.update',
+        'destroy' => 'admin.faq.destroy',
+    ]);
 
-// USER (login)
-Route::middleware(['auth'])->group(function () {
     Route::get('/faq-user', [FaqController::class, 'user'])->name('faq.user');
 });
 
-// PUBLIC (tanpa login)
+// PUBLIC FAQ
+Route::resource('faq', FaqController::class);
 Route::get('/faq-public', [FaqController::class, 'public'])->name('faq.public');
-
